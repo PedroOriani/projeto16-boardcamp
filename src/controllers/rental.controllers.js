@@ -4,7 +4,7 @@ import { db } from "../database/database.connection.js";
 export async function getRentals(req,res){
     try{
         const rentals = await db.query(`
-            SELECT rental.*, customer.id, customer.name, game.id, game.name
+            SELECT rentals.*, customer.id, customer.name, game.id, game.name
             FROM rentals
             JOIN customers ON rentals."customerId"=customer.id
             JOIN games ON rentals."gamesId"=game.id;
@@ -39,7 +39,7 @@ export async function postRental(req,res){
     const delayFee = null;
     const originalPrice = daysRented * pricePerDay;
 
-    const rental = await db.query(`
+    await db.query(`
     INSERT INTO rentals
     ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFree")
     VALUES ($1, $1, $3, $4, $5, $6, $7)`,
@@ -63,6 +63,9 @@ export async function deleteRental(req,res){
     const { id } = req.params;
 
     try{
+
+    const verId =  await db.query(`SELECT * FROM rentals WHERE id=$1;`, [id])
+    if (!verId) return res.sendStatus()
         
     }catch (err){
         res.status(500).send(err.messsage)
