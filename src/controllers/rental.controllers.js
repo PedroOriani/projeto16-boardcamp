@@ -2,6 +2,14 @@ import { db } from "../database/database.connection.js";
 
 export async function getRentals(req,res){
     try{
+        const rentals = await db.query(`
+            SELECT rental.*, customer.id, customer.name, game.id, game.name
+            FROM rentals
+            JOIN customers ON rentals."customerId"=customer.id
+            JOIN games ON rentals."gamesId"=game.id;
+        `);
+
+        res.send(rentals.rows);
         
     }catch (err){
         res.status(500).send(err.messsage)
@@ -9,13 +17,25 @@ export async function getRentals(req,res){
 }
 
 export async function postRental(req,res){
-    
+    try{
+        
+    }catch (err){
+        res.status(500).send(err.messsage)
+    }
 }
 
 export async function finalizeRental(req,res){
-    
+    try{
+        
+    }catch (err){
+        res.status(500).send(err.messsage)
+    }
 }
 
 export async function deleteRental(req,res){
-    
+    try{
+        
+    }catch (err){
+        res.status(500).send(err.messsage)
+    }
 }
