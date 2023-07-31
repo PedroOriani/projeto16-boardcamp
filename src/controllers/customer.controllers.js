@@ -54,11 +54,13 @@ export async function updateCustomer(req,res){
     const { id } = req.params
 
     try{
-        const verCpf = await db.query(`SELECT * FROM customers WHERE cpf=${cpf} AND id<>${id};`)
+        const verCpf = await db.query(`SELECT * FROM customers WHERE cpf=$1 AND id<>$2;`, [cpf, id])
 
         if (verCpf.rows.length > 0) return res.status(409).send('Este número de CPF ja está sendo utilizado por outro usuário');
     
-        await db.query(`UPDATE customers SET "name"=${name}, phone=${phone}, cpf=${cpf}, birthday=${birthday} WHERE "id"=${id}`)
+        await db.query(`UPDATE customers SET "name"=$1, phone=$2, cpf=$3, birthday=$4 WHERE "id"=$5`, 
+            [name, phone, cpf, birthday, id]
+        )
 
         res.sendStatus(200)
     }catch (err){

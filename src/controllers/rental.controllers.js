@@ -20,6 +20,15 @@ export async function postRental(req,res){
     const { customerId, gameId, daysRented } = req.body
 
     try{
+
+    const game = await db.query(`SELECT * FROM games WHERE id=$1`, [gameId]);
+    const pricePerDay = game.rows[0].pricePerDay;
+
+    daysRented = Number(daysRented)
+    const rentDate = format(new Date(), 'yyyy-MM-dd')
+    const returnDate = null
+    const delayFee = null
+    const originalPrice = daysRented * pricePerDay
         
     }catch (err){
         res.status(500).send(err.messsage)
