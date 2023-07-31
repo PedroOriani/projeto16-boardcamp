@@ -10,10 +10,11 @@ export async function getGames(req,res){
 }
 
 export async function postGame(req,res){
+    const { name } = req.body;
     try{
-        const name = await db.query(`SELECT * FROM games WHERE name ILIKE '%${req.body.name}%'`)
+        const verName = await db.query(`SELECT * FROM games WHERE name ILIKE '%${name}%'`)
 
-        if (name.rows.length > 0) return res.status(409).send('Esse jogo ja está cadastrado');
+        if (verName.rows.length > 0) return res.status(409).send('Esse jogo ja está cadastrado');
 
         await db.query(
             'INSERT INTO games (name, image, "stockTotal", "pricePerDay") VALUES ($1, $2, $3, $4);',
