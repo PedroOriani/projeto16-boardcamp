@@ -88,6 +88,7 @@ export async function finalizeRental(req,res){
 
         const finalDay = format(addDays(rental.rentDate, rental.daysRented), 'yyyy-MM-dd')
         const perDay = rental.rentDate / rental.daysRented
+
         const fee = difDias(finalDay, returnDate) > 0 ? difDias(finalDay, returnDate) * perDay : 0;
 
         await db.query(`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE "id"=$3`, [returnDate, fee, id])
