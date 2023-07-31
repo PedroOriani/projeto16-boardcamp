@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { db } from "../database/database.connection.js";
 
 export async function getRentals(req,res){
@@ -59,6 +60,8 @@ export async function finalizeRental(req,res){
 }
 
 export async function deleteRental(req,res){
+    const { id } = req.params;
+
     try{
         
     }catch (err){
