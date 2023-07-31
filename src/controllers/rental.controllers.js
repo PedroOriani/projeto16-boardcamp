@@ -26,12 +26,12 @@ export async function postRental(req,res){
     if(daysRented <= 0) return res.sendStatus(400);
 
     const customer = await db.query(`SELECT * FROM customers WHERE id=$1;`, [customerId]);
-    if(!customer) return res.sendStatus(400);
+    if(customer.rows.length === 0) return res.sendStatus(400);
 
     const game = await db.query(`SELECT * FROM games WHERE id=$1;`, [gameId]);
-    if(!game) return res.sendStatus(400);
+    if(game.rows.length === 0) return res.sendStatus(400);
 
-    if(game.stockTotal < 1) return res.sendStatus(400);
+    if(game.rows[0].stockTotal < 1) return res.sendStatus(400);
 
     const pricePerDay = game.rows[0].pricePerDay;
     const rentDate = format(new Date(), 'yyyy-MM-dd');
@@ -40,14 +40,14 @@ export async function postRental(req,res){
     const originalPrice = daysRented * pricePerDay;
 
     await db.query(`
-    INSERT INTO rentals
-    ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFree")
-    VALUES ($1, $1, $3, $4, $5, $6, $7)`,
-    [customerId, gameId, rentDate, daysRented, returnDate, originalPrice, delayFee]
+        INSERT INTO rentals
+        ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFree")
+        VALUES ($1, $1, $3, $4, $5, $6, $7)`,
+        [customerId, gameId, rentDate, daysRented, returnDate, originalPrice, delayFee]
     );
         res.sendStatus(201)
     }catch (err){
-        res.status(500).send(err.messsage)
+        res.status(500).send(err.message)
     }
 }
 
@@ -64,8 +64,13 @@ export async function deleteRental(req,res){
 
     try{
 
-    const verId =  await db.query(`SELECT * FROM rentals WHERE id=$1;`, [id])
-    if (!verId) return res.sendStatus()
+    const rental =  await db.query(`SELECT * FROM rentals WHERE id=$1;`, [id]);
+
+    if (rental.rows.length === 0) return res.status(404).send('Esse ID não corresponde a nenhum aluguel');
+
+    if(rental.returnDate !== null) return res.sendStatus(400);
+
+    await db.query (`DELETE FROM rentals WHERE id=$1;`, [id]);
         
     }catch (err){
         res.status(500).send(err.messsage)
