@@ -20,7 +20,7 @@ export async function getRentals(req,res){
                 id: r.id,
                 customerId: r.customerId,
                 gameId: r.gameId,
-                daysRented: r.daysred,
+                daysRented: r.daysRented,
                 returnDate: r.returnDate,
                 originalPrice: r.originalPrice,
                 delayFee: r.delayFee,
