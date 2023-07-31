@@ -15,11 +15,14 @@ export async function getRentals(req,res){
         JOIN games ON rentals."gameId" = games.id
         ;`)
 
+        const renDate = format(renDate, 'yyyy-MM-dd');
+
         const rentals = resultado.rows.map((r) => {
             return{
                 id: r.id,
                 customerId: r.customerId,
                 gameId: r.gameId,
+                renDate: rent.renDate,
                 daysRented: r.daysRented,
                 returnDate: r.returnDate,
                 originalPrice: r.originalPrice,
