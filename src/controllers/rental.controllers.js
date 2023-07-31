@@ -91,7 +91,7 @@ export async function finalizeRental(req,res){
         const fee = difDias(finalDay, returnDate) > 0 ? difDias(finalDay, returnDate) * perDay : 0;
 
         await db.query(`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE "id"=$3`, [returnDate, fee, id])
-        return res.sendStatus(200)
+        res.sendStatus(200)
          
     }catch (err){
         res.status(500).send(err.messsage)
