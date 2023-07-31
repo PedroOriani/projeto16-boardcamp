@@ -3,15 +3,34 @@ import { db } from "../database/database.connection.js";
 
 export async function getRentals(req,res){
     try{
-        const rentals = await db.query(`
+        const resultado = await db.query(`
             SELECT rentals.*, customer.id, customer.name, game.id, game.name
             FROM rentals
             JOIN customers ON rentals."customerId"=customer.id
             JOIN games ON rentals."gamesId"=game.id;
         `);
 
-        res.send(rentals.rows);
+        const rentals = resultado.map(rent => {
+            return{
+                id: rent.id,
+                customerId: rent.customerId,
+                gameId: rent.gameId,
+                daysRented: rent.daysRented,
+                returnDate: rent.returnDate,
+                originalPrice: rent.originalPrice,
+                delayFee: rent.delayFee,
+                customer:{
+                    id: rent.customer.id,
+                    name: rent.customer.name
+                },
+                game:{
+                    id: rent.game.id,
+                    name: rent.game.name
+                }
+            }
+        })
         
+        res.send(rentals)
     }catch (err){
         res.status(500).send(err.messsage)
     }
@@ -22,7 +41,6 @@ export async function postRental(req,res){
 
     try{
     
-    daysRented = Number(daysRented);
     if(daysRented <= 0) return res.sendStatus(400);
 
     const customer = await db.query(`SELECT * FROM customers WHERE "id"=$1;`, [customerId]);
