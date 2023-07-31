@@ -18,7 +18,7 @@ export async function getCustomersById(req,res){
 
     try{
         const customer = await db.query(`SELECT id, name, phone, cpf, to_char(birthday, 'YYYY-MM-DD') as birthday FROM customers WHERE id=${id};`);
-        
+
         if (customer.rows.length === 0) return res.status(404).send('Não existe um cliente com esse ID')
         
         res.send(customer.rows[0])
@@ -53,5 +53,15 @@ export async function updateCustomer(req,res){
     const { name, phone, cpf, birthday } = req.body;
     const { id } = req.params
 
+    try{
+        const verCpf = await db.query(`SELECT * FROM customers WHERE cpf=${cpf} AND id<>${id};`)
 
+        if (verCpf.rows.length > 0) return res.status(409).send('CPF já está sendo utilizado por outro usuário');
+    
+        await db.query(`UPDATE customers SET name=${name}, phone=${phone}, cpf=${cpf}, birthday=${birthday} WHERE id=${id}`)
+
+        res.sendStatus(200)
+    }catch (err){
+        res.status(500).send(err.message)
+    }
 }
