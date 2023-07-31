@@ -6,7 +6,10 @@ export async function getCustomers(req,res){
     try{
         const customers = await db.query('SELECT * FROM customers');
 
-        const customClient = customers.map(customer => customer.birthday = format(new Date(customer.birthday), 'yyyy-MM-dd'))
+        const customClient = customers.map(customer => {
+            customer.birthday = format(new Date(customer.birthday), 'yyyy-MM-dd')
+            return customers
+        })
 
         res.send(customClient.rows)
     }catch (err){
