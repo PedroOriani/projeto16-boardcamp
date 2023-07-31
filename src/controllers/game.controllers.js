@@ -10,7 +10,7 @@ export async function getGames(req,res){
 }
 
 export async function postGame(req,res){
-    const { name } = req.body;
+    const { name, image, stockTotal, pricePerDay } = req.body;
     try{
         const verName = await db.query(`SELECT * FROM games WHERE name ILIKE '%${name}%'`)
 
@@ -18,7 +18,7 @@ export async function postGame(req,res){
 
         await db.query(
             'INSERT INTO games (name, image, "stockTotal", "pricePerDay") VALUES ($1, $2, $3, $4);',
-            [req.body.name, req.body.image, req.body.stockTotal, req.body.pricePerDay]
+            [name, image, stockTotal, pricePerDay]
         )
 
         res.sendStatus(201)

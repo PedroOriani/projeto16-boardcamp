@@ -14,7 +14,7 @@ export async function getCustomers(req,res){
 }
 
 export async function getCustomersById(req,res){
-    const id = req.params
+    const { id } = req.params
 
     try{
         const customer = await db.query(`SELECT id, name, phone, cpf, to_char(birthday, 'YYYY-MM-DD') as birthday FROM customers WHERE id=${id};`);
@@ -30,7 +30,7 @@ export async function getCustomersById(req,res){
 }
 
 export async function postCustomer(req,res){
-    const { cpf } = req.body;
+    const { name, phone, cpf, birthday } = req.body;
 
     try{
 
@@ -41,7 +41,7 @@ export async function postCustomer(req,res){
 
         await db.query(
             'INSERT INTO customers (name, phone, cpf, birthday) VALUES ($1, $2, $3, $4);',
-            [req.body.name, req.body.phone, req.body.cpf, req.body.birthday]
+            [name, phone, cpf, birthday]
         )
 
         res.sendStatus(201)
@@ -51,5 +51,6 @@ export async function postCustomer(req,res){
 }
 
 export async function updateCustomer(req,res){
-    
+    const { name, phone, cpf, birthday } = req.body;
+    const { id } = req.params
 }
