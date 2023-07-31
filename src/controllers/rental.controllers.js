@@ -4,30 +4,33 @@ import { db } from "../database/database.connection.js";
 export async function getRentals(req,res){
     try{
         const resultado = await db.query(`
-            SELECT rentals.*, 
-            customer.id AS customer_id, customer.name AS customer_name,
-            game.id AS game_id, game.name AS game_name
-            FROM rentals
-            JOIN customers ON rentals."customerId"=customer.id
-            JOIN games ON rentals."gamesId"=game.id;
-        `);
+        SELECT 
+        rentals.*,
+        customers.id AS customer_id,
+        customers.name AS customer_name,
+        games.id AS game_id,
+        games.name AS game_name
+        FROM rentals
+        JOIN customers ON rentals."customerId" = customers.id
+        JOIN games ON rentals."gameId" = games.id
+        ;`)
 
-        const rentals = resultado.rows.map((rent) => {
+        const rentals = resultado.rows.map((r) => {
             return{
-                id: rent.id,
-                customerId: rent.customerId,
-                gameId: rent.gameId,
-                daysRented: rent.daysRented,
-                returnDate: rent.returnDate,
-                originalPrice: rent.originalPrice,
-                delayFee: rent.delayFee,
+                id: r.id,
+                customerId: r.customerId,
+                gameId: r.gameId,
+                daysRented: r.daysred,
+                returnDate: r.returnDate,
+                originalPrice: r.originalPrice,
+                delayFee: r.delayFee,
                 customer:{
-                    id: rent.customer_id,
-                    name: rent.customer_name
+                    id: r.customer_id,
+                    name: r.customer_name
                 },
                 game:{
-                    id: rent.game_id,
-                    name: rent.game_name
+                    id: r.game_id,
+                    name: r.game_name
                 }
             }
         })
@@ -83,6 +86,14 @@ export async function finalizeRental(req,res){
         const finalDay = format(addDays(rental.rentDate, rental.daysRented), 'yyyy-MM-dd')
         const perDay = rental.rentDate / rental.daysRented
         const fee = difDias(finalDay, returnDate) > 0 ? difDias(finalDay, returnDate) * perDay : 0;
+
+        const returnDate = format(rental.rentDate, 'yyyy-MM-dd');
+
+        await db.query(`UPDATE rentals SET "customerId" = $1, "gameId" = $2, "rentDate" = $3, "daysRented" = $4, "returnDate" = $5, "originalPrice" = $6, "delayFee" = $7 WHERE "id"=$8`, 
+            [rental.customerId, rental.gameId, rental.rentDate, rental.daysRented, returnDate, rental.originalPrice, fee]
+        )
+
+        res.sendStatus(200)
 
     }catch (err){
         res.status(500).send(err.messsage)
