@@ -5,7 +5,10 @@ import { format } from "date-fns";
 export async function getCustomers(req,res){
     try{
         const customers = await db.query('SELECT * FROM customers');
-        res.send(customers)
+
+        const customClient = customers.map(customer => customer.birthday = format(new Date(customer.birthday), 'yyyy-MM-dd'))
+
+        res.send(customClient)
     }catch (err){
         res.status(500).send(err.message)
     }
@@ -31,6 +34,9 @@ export async function postCustomer(req,res){
     const { cpf } = req.body;
 
     try{
+
+        if(typeof(Number(cpf)) !== 'number') return res.status(400).send('CPF deve apenas conter números');
+        
         const verCpf = await db.query(`SELECT * FROM customers WHERE cpf ILIKE '%${cpf}%'`)
         if (verCpf.rows.length > 0) return res.status(409).send('Este número de CPF ja está sendo utilizado')
 
