@@ -25,10 +25,10 @@ export async function postRental(req,res){
     daysRented = Number(daysRented);
     if(daysRented <= 0) return res.sendStatus(400);
 
-    const customer = await db.query(`SELECT * FROM customers WHERE id=$1;`, [customerId]);
+    const customer = await db.query(`SELECT * FROM customers WHERE "id"=$1;`, [customerId]);
     if(customer.rows.length === 0) return res.sendStatus(400);
 
-    const game = await db.query(`SELECT * FROM games WHERE id=$1;`, [gameId]);
+    const game = await db.query(`SELECT * FROM games WHERE "id"=$1;`, [gameId]);
     if(game.rows.length === 0) return res.sendStatus(400);
 
     if(game.rows[0].stockTotal < 1) return res.sendStatus(400);
@@ -64,13 +64,13 @@ export async function deleteRental(req,res){
 
     try{
 
-    const rental =  await db.query(`SELECT * FROM rentals WHERE id=$1;`, [id]);
+    const rental =  await db.query(`SELECT * FROM rentals WHERE "id"=$1;`, [id]);
 
     if (rental.rows.length === 0) return res.status(404).send('Esse ID não corresponde a nenhum aluguel');
 
     if(rental.returnDate !== null) return res.sendStatus(400);
 
-    await db.query (`DELETE FROM rentals WHERE id=$1;`, [id]);
+    await db.query (`DELETE FROM rentals WHERE "id"=$1;`, [id]);
         
     }catch (err){
         res.status(500).send(err.messsage)
