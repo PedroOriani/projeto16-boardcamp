@@ -36,7 +36,7 @@ export async function postCustomer(req,res){
         if((Number(cpf)) === NaN) return res.status(400).send('CPF deve apenas conter números');
 
         const verCpf = await db.query(`SELECT * FROM customers WHERE cpf ILIKE '%${cpf}%'`)
-        if (verCpf.rows.length > 0) return res.status(409).send('Este número de CPF ja está sendo utilizado')
+        if (verCpf.rows.length > 0) return res.status(409).send('Este número de CPF ja está sendo utilizado por outro usuário')
 
         await db.query(
             'INSERT INTO customers (name, phone, cpf, birthday) VALUES ($1, $2, $3, $4);',
@@ -56,9 +56,9 @@ export async function updateCustomer(req,res){
     try{
         const verCpf = await db.query(`SELECT * FROM customers WHERE cpf=${cpf} AND id<>${id};`)
 
-        if (verCpf.rows.length > 0) return res.status(409).send('CPF já está sendo utilizado por outro usuário');
+        if (verCpf.rows.length > 0) return res.status(409).send('Este número de CPF ja está sendo utilizado por outro usuário');
     
-        await db.query(`UPDATE customers SET name=${name}, phone=${phone}, cpf=${cpf}, birthday=${birthday} WHERE id=${id}`)
+        await db.query(`UPDATE customers SET "name"=${name}, phone=${phone}, cpf=${cpf}, birthday=${birthday} WHERE "id"=${id}`)
 
         res.sendStatus(200)
     }catch (err){
