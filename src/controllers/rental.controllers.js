@@ -5,7 +5,7 @@ export async function getRentals(req,res){
     try{
         const resultado = await db.query(`
         SELECT 
-        rentals.*,
+        rentals.id,"customerId","gameId","daysRented",to_char("returnDate", 'YYYY-MM-DD') as "returnDate","originalPrice","delayFee",
         customers.id AS customer_id,
         customers.name AS customer_name,
         games.id AS game_id,
@@ -14,8 +14,6 @@ export async function getRentals(req,res){
         JOIN customers ON rentals."customerId" = customers.id
         JOIN games ON rentals."gameId" = games.id
         ;`)
-
-        const renDate = format(renDate, 'yyyy-MM-dd');
 
         const rentals = resultado.rows.map((r) => {
             return{
