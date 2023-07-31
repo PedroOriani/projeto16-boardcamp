@@ -49,7 +49,8 @@ export async function postRental(req,res){
     const game = await db.query(`SELECT * FROM games WHERE "id"=$1;`, [gameId]);
     if(game.rows.length === 0) return res.sendStatus(400);
 
-    if(game.rows[0].stockTotal < 1) return res.sendStatus(400);
+    const gameAvailable = await db.query(`SELECT * FROM rentals WHERE "gameId"=$1;`, [gameId])
+    if(game.rows[0].stockTotal < gameAvailable.rows.length) return res.sendStatus(400);
 
     const pricePerDay = game.rows[0].pricePerDay;
     const rentDate = format(new Date(), 'yyyy-MM-dd');
@@ -70,8 +71,13 @@ export async function postRental(req,res){
 export async function finalizeRental(req,res){
     const { id } = req.params;
     const returnDate = format(new Date(), 'yyyy-MM-dd')
+
     try{
-        
+        const rental = await db.query('SELECT * FROM rentals WHERE id=$1;', [id])
+        if (rental === null) return res.sendStatus(404)
+        if (rental.rows[0].returnDate != null) return res.sendStatus(400)
+
+
     }catch (err){
         res.status(500).send(err.messsage)
     }
