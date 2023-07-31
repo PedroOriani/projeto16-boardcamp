@@ -58,7 +58,7 @@ export async function postRental(req,res){
     await db.query(`
         INSERT INTO rentals
         ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee")
-        VALUES ($1, $1, $3, $4, $5, $6, $7)`,
+        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
         [customerId, gameId, rentDate, daysRented, null, originalPrice, null]
     );
         res.sendStatus(201)
@@ -68,6 +68,8 @@ export async function postRental(req,res){
 }
 
 export async function finalizeRental(req,res){
+    const { id } = req.params;
+    const returnDate = format(new Date(), 'yyyy-MM-dd')
     try{
         
     }catch (err){
