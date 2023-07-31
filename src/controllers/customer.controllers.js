@@ -4,14 +4,10 @@ import { format } from "date-fns";
 
 export async function getCustomers(req,res){
     try{
-        const customers = await db.query('SELECT * FROM customers');
+        const customers = await db.query("SELECT id, name, phone, cpf, to_char(birthday, 'YYYY-MM-DD') as birthday FROM customers;");
 
-        const customClient = customers.map(customer => {
-            customer.birthday = format(new Date(customer.birthday), 'yyyy-MM-dd')
-            return customers
-        })
+        res.send(customers.rows)
 
-        res.send(customClient.rows)
     }catch (err){
         res.status(500).send(err.message)
     }
@@ -21,7 +17,7 @@ export async function getCustomersById(req,res){
     const id = req.params
 
     try{
-        const customer = await db.query(`SELECT * FROM customers WHERE id=${id}`);
+        const customer = await db.query(`SELECT id, name, phone, cpf, to_char(birthday, 'YYYY-MM-DD') as birthday FROM customers WHERE id=${id};`);
         if (customer) {
             customer.birthday = format(new Date(customer.birthday), 'yyyy-MM-dd')
             res.send(customer.rows)
