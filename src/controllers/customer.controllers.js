@@ -35,7 +35,7 @@ export async function postCustomer(req,res){
 
     try{
 
-        if(typeof(Number(cpf)) !== 'number') return res.status(400).send('CPF deve apenas conter números');
+        if((Number(cpf)) === NaN) return res.status(400).send('CPF deve apenas conter números');
 
         const verCpf = await db.query(`SELECT * FROM customers WHERE cpf ILIKE '%${cpf}%'`)
         if (verCpf.rows.length > 0) return res.status(409).send('Este número de CPF ja está sendo utilizado')
