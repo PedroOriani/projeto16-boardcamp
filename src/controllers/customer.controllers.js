@@ -18,12 +18,11 @@ export async function getCustomersById(req,res){
 
     try{
         const customer = await db.query(`SELECT id, name, phone, cpf, to_char(birthday, 'YYYY-MM-DD') as birthday FROM customers WHERE id=${id};`);
-        if (customer) {
-            customer.birthday = format(new Date(customer.birthday), 'yyyy-MM-dd')
-            res.send(customer.rows)
-        }else{
-            return res.status(400).send('Não existe um cliente com esse ID')
-        }        
+        
+        if (customer.rows.length === 0) return res.status(404).send('Não existe um cliente com esse ID')
+        
+        res.send(customer.rows[0])
+
     }catch (err){
         res.status(500).send(err.message)
     }
@@ -53,4 +52,6 @@ export async function postCustomer(req,res){
 export async function updateCustomer(req,res){
     const { name, phone, cpf, birthday } = req.body;
     const { id } = req.params
+
+
 }
