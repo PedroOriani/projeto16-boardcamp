@@ -1,4 +1,5 @@
 import { db } from "../database/database.connection.js";
+import { format } from "date-fns";
 
 
 export async function getCustomers(req,res){
@@ -16,6 +17,7 @@ export async function getCustomersById(req,res){
     try{
         const customer = await db.query(`SELECT * FROM customers WHERE id=${id}`);
         if (customer) {
+            customer.birthday = format(new Date(customer.birthday), 'yyyy-MM-dd')
             res.send(customer)
         }else{
             return res.status(400).send('Não existe um cliente com esse ID')
