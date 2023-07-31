@@ -5,7 +5,7 @@ export async function getRentals(req,res){
     try{
         const resultado = await db.query(`
         SELECT 
-        rentals.id,"customerId","gameId","daysRented",to_char("returnDate", 'YYYY-MM-DD') as "returnDate","originalPrice","delayFee",
+        rentals.id,"customerId","gameId", to_char("renDate", 'YYYY-MM-DD') as "renDate", "daysRented", "returnDate","originalPrice","delayFee",
         customers.id AS customer_id,
         customers.name AS customer_name,
         games.id AS game_id,
