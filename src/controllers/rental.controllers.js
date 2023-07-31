@@ -83,17 +83,21 @@ export async function finalizeRental(req,res){
         if (rental.rows.length === 0) return res.sendStatus(404)
         if (rental.rows[0].returnDate != null) return res.sendStatus(400)
 
+        const returnDate = format(rental.rentDate, 'yyyy-MM-dd');
+
         const finalDay = format(addDays(rental.rentDate, rental.daysRented), 'yyyy-MM-dd')
         const perDay = rental.rentDate / rental.daysRented
         const fee = difDias(finalDay, returnDate) > 0 ? difDias(finalDay, returnDate) * perDay : 0;
 
-        const returnDate = format(rental.rentDate, 'yyyy-MM-dd');
+        if (fee > 0){
+            await db.query(`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE "id"=$3`, [returnDate, fee, id])
+            return res.sendStatus(200)
+        }else{
+            await db.query(`UPDATE rentals SET "returnDate" = $1 WHERE "id"=$2`, [returnDate, id])
+            return res.sendStatus(200)
+        }
 
-        await db.query(`UPDATE rentals SET "customerId" = $1, "gameId" = $2, "rentDate" = $3, "daysRented" = $4, "returnDate" = $5, "originalPrice" = $6, "delayFee" = $7 WHERE "id"=$8`, 
-            [rental.customerId, rental.gameId, rental.rentDate, rental.daysRented, returnDate, rental.originalPrice, fee]
-        )
-
-        res.sendStatus(200)
+        
 
     }catch (err){
         res.status(500).send(err.messsage)
