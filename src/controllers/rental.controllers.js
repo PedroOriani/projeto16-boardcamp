@@ -15,7 +15,7 @@ export async function getRentals(req,res){
         JOIN games ON rentals."gameId" = games.id
         ;`)
 
-        let formatDate = format(renDate, 'yyyy-MM-dd')
+        let formatDate = format(new Date (renDate), 'yyyy-MM-dd')
 
         const rentals = resultado.rows.map((r) => {
             return{
