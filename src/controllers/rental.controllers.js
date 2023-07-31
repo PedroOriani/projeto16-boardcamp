@@ -122,7 +122,7 @@ export async function deleteRental(req,res){
 
     if (rental.rows.length === 0) return res.status(404).send('Esse ID não corresponde a nenhum aluguel');
 
-    if(rental.returnDate !== null) return res.sendStatus(400);
+    if(rental.rows[0].returnDate === null) return res.sendStatus(400);
 
     await db.query (`DELETE FROM rentals WHERE "id"=$1;`, [id]);
         
