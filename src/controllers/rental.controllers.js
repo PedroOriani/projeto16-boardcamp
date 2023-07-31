@@ -90,13 +90,9 @@ export async function finalizeRental(req,res){
         const perDay = rental.rentDate / rental.daysRented
         const fee = difDias(finalDay, returnDate) > 0 ? difDias(finalDay, returnDate) * perDay : 0;
 
-        if (fee > 0){
-            await db.query(`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE "id"=$3`, [returnDate, fee, id])
-            return res.sendStatus(200)
-        }else{
-            await db.query(`UPDATE rentals SET "returnDate" = $1 WHERE "id"=$2`, [returnDate, id])
-            return res.sendStatus(200)
-        }      
+        await db.query(`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE "id"=$3`, [returnDate, fee, id])
+        return res.sendStatus(200)
+         
     }catch (err){
         res.status(500).send(err.messsage)
     }
