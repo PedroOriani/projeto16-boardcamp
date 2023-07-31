@@ -53,15 +53,13 @@ export async function postRental(req,res){
 
     const pricePerDay = game.rows[0].pricePerDay;
     const rentDate = format(new Date(), 'yyyy-MM-dd');
-    const returnDate = null;
-    const delayFee = null;
     const originalPrice = daysRented * pricePerDay;
 
     await db.query(`
         INSERT INTO rentals
-        ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFree")
+        ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee")
         VALUES ($1, $1, $3, $4, $5, $6, $7)`,
-        [customerId, gameId, rentDate, daysRented, returnDate, originalPrice, delayFee]
+        [customerId, gameId, rentDate, daysRented, null, originalPrice, null]
     );
         res.sendStatus(201)
     }catch (err){
