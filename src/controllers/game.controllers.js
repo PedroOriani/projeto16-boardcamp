@@ -11,7 +11,7 @@ export async function getGames(req,res){
 
 export async function postGame(req,res){
     try{
-        const name = await db.query(`SELECT * FROM games WHERE name LIKE '%${req.body.name}%'`)
+        const name = await db.query(`SELECT * FROM games WHERE name ILIKE '%${req.body.name}%'`)
 
         if (name.rows[0].length > 0) return res.status(409).send('Esse jogo ja está cadastrado');
 
