@@ -10,7 +10,7 @@ export async function getRentals(req,res){
             JOIN games ON rentals."gamesId"=game.id;
         `);
 
-        const rentals = resultado.map(rent => {
+        const rentals = resultado.rows.map(rent => {
             return{
                 id: rent.id,
                 customerId: rent.customerId,
