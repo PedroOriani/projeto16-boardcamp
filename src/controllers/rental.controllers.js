@@ -4,13 +4,15 @@ import { db } from "../database/database.connection.js";
 export async function getRentals(req,res){
     try{
         const resultado = await db.query(`
-            SELECT rentals.*, customer.id, customer.name, game.id, game.name
+            SELECT rentals.*, 
+            customer.id AS customer_id, customer.name AS customer_name,
+            game.id AS game_id, game.name AS game_name
             FROM rentals
             JOIN customers ON rentals."customerId"=customer.id
             JOIN games ON rentals."gamesId"=game.id;
         `);
 
-        const rentals = resultado.rows.map(rent => {
+        const rentals = resultado.rows.map((rent) => {
             return{
                 id: rent.id,
                 customerId: rent.customerId,
@@ -20,12 +22,12 @@ export async function getRentals(req,res){
                 originalPrice: rent.originalPrice,
                 delayFee: rent.delayFee,
                 customer:{
-                    id: rent.customer.id,
-                    name: rent.customer.name
+                    id: rent.customer_id,
+                    name: rent.customer_name
                 },
                 game:{
-                    id: rent.game.id,
-                    name: rent.game.name
+                    id: rent.game_id,
+                    name: rent.game_name
                 }
             }
         })
